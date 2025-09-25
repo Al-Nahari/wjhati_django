@@ -9,7 +9,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 GDAL_LIBRARY_PATH = r"C:\CGDAL\bin\gdal.dll"
 os.environ['GDAL_LIBRARY_PATH'] = GDAL_LIBRARY_PATH
 
-SECRET_KEY = 'django-insecure-l3t17j@t&60hwwa8ze7^$10zui4ca2!!k^**0h%ujxncmtg^(*'
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 LOGGING = {
     'version': 1,
     'handlers': {
@@ -85,11 +85,11 @@ import os
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "FNW",
-        "USER": "postgres",
-        "PASSWORD": "nahari",
-        "HOST": "localhost",
-        "PORT": "5432",
+        "NAME": os.getenv("POSTGRES_DB"),
+        "USER": os.getenv("POSTGRES_USER"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
+        "HOST": os.getenv("POSTGRES_HOST", "db"),
+        "PORT": os.getenv("POSTGRES_PORT", 5432),
     }
 }
 
@@ -122,6 +122,7 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'static'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
