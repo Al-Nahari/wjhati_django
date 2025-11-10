@@ -1,21 +1,56 @@
-version: "3.9"
-
 services:
+  # خدمة Django
   web:
     build: .
     volumes:
       - .:/app
     ports:
       - "8000:8000"
-    env_file: .env
+    env_file:
+      - .env.example
     depends_on:
       - db
+      - redis
+    command: python manage.py runserver 0.0.0.0:8000
 
+  # قاعدة بيانات PostgreSQL
   db:
     image: postgres:17
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-    env_file: .env
+    env_file:
+      - .env.example
 
+  # خدمة Redis
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
+  # خدمة Celery Worker
+  celery_worker:
+    build: .
+    command: celery -A backend worker --loglevel=info --pool=solo
+    volumes:
+      - .:/app
+    env_file:
+      - .env.example
+    depends_on:
+      - web
+      - redis
+
+  # خدمة Celery Beat (الجدولة)
+  celery_beat:
+    build: .
+    command: celery -A backend beat --loglevel=info
+    volumes:
+      - .:/app
+    env_file:
+      - .env.example
+    depends_on:
+      - web
+      - redis
+
+# Volumes لحفظ بيانات PostgreSQL
 volumes:
   postgres_data:
