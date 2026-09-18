@@ -11,19 +11,24 @@ services:
     envVars:
       # أساسيات Django
       - key: DJANGO_SECRET_KEY
-        value: your-secret-key
+        generateValue: true          # يولّد Render قيمة عشوائية بدلاً من كتابتها هنا
       - key: DJANGO_SETTINGS_MODULE
         value: backend.settings
       - key: PYTHON_VERSION
         value: 3.11
 
       # بيانات الاتصال بقاعدة البيانات (Postgres on Render)
+      # مهم جداً: كانت قيم DB_PASSWORD الحقيقية وكلمة مرور السوبر يوزر مكتوبة هنا
+      # نصاً صريحاً ومرفوعة إلى مستودع GitHub عام — يجب اعتبارها مخترقة وتدويرها
+      # فوراً من لوحة تحكم Render/قاعدة البيانات. استخدم "sync: false" حتى لا تُخزَّن
+      # القيم الحساسة في هذا الملف؛ عندها يطلب منك Render إدخالها يدوياً من اللوحة
+      # فقط، ولا تُرفع أبداً إلى git.
       - key: DB_NAME
         value: wejhatidb
       - key: DB_USER
         value: nahari
       - key: DB_PASSWORD
-        value: "{{ yoqoUxNN8qdrT9u0rocHZRPdmHvRBfwRsvur }}"    # الصق كلمة المرور الحقيقية هنا
+        sync: false                  # عيّن القيمة الحقيقية يدوياً من لوحة تحكم Render فقط
       - key: DB_HOST
         value: dpg-d0j5dkjuibrs73cmjrj0-a
       - key: DB_PORT
@@ -35,7 +40,7 @@ services:
       - key: DJANGO_SUPERUSER_EMAIL
         value: admin@example.com
       - key: DJANGO_SUPERUSER_PASSWORD
-        value: StrongP@ssw0rd
+        sync: false                  # عيّن كلمة مرور قوية يدوياً من لوحة تحكم Render فقط
 
     deploy:
       postDeploy:

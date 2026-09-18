@@ -1,7 +1,7 @@
 
 
 import uuid
-from apis import models
+from django.db import models
 from apis.models import BaseModel, User
 from django.utils.translation import gettext_lazy as _
 

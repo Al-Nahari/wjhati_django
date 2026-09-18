@@ -279,3 +279,10 @@ chat_attachments/
 .env
 .envs/*
 !.envs/.local/
+
+
+### Project secrets — never commit these
+apis/firebase_admin_sdk.json
+*firebase_admin_sdk*.json
+.env
+celerybeat-schedule*

@@ -1,11 +1,12 @@
+from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from apis import models
+from apis.models import BaseModel, User
 
 
 class FCMToken(models.Model):
     user = models.ForeignKey(
-        models.User, 
+        User,
         on_delete=models.CASCADE, 
         related_name='fcm_tokens',
         verbose_name=_("User")
@@ -38,12 +39,12 @@ class FCMToken(models.Model):
         return f"{self.user.username} - {self.token[:10]}..."
 
 
-class Notification(models.BaseModel):
+class Notification(BaseModel):
     """
     يمثل إشعار للمستخدم بأنشطة مختلفة في النظام.
     """
     user = models.ForeignKey(
-        models.User,
+        User,
         on_delete=models.CASCADE,
         related_name='notifications',
         verbose_name=_("المستخدم")

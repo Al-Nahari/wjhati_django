@@ -1,14 +1,30 @@
-import Notification
+from Notification.models import Notification, FCMToken
 from Transaction.models import Transaction, Transfer, Wallet
 from rest_framework import serializers
 from .models import *
 from django.contrib.auth import get_user_model
+from django.contrib.auth.password_validation import validate_password
 User = get_user_model()
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'email']
+
+
+class RegisterSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, validators=[validate_password])
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'password']
+
+    def create(self, validated_data):
+        return User.objects.create_user(
+            username=validated_data['username'],
+            email=validated_data.get('email', ''),
+            password=validated_data['password'],
+        )
 
 class ClientSerializer(serializers.ModelSerializer):
     # هذا الحقل يملأ تلقائيًا بالمستخدم الحالي
@@ -120,4 +136,6 @@ class ChatSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Chat
-        fields = ['id', 'title', 'is_group', 'participants', 'last_message', 'updated_at']
+        # ملاحظة: نموذج Chat لا يملك حقلي "title" أو "is_group" (لم يكونا موجودين
+        # أصلاً في models.py)، لذا تمت إزالتهما لتفادي خطأ DRF عند بناء المُسلسِل.
+        fields = ['id', 'participants', 'last_message', 'created_at', 'updated_at']

@@ -6,7 +6,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
 from django.conf import settings
 from apis.tasks import send_fcm_notification
-from .models import Booking, Chat, Transaction, Transfer, Bonus, Wallet, CasheBooking, Trip, Notification, FCMToken
+from .models import Booking, Chat, Trip
+from Transaction.models import Wallet
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +22,9 @@ def create_user_chat(sender, instance, created, **kwargs):
     """إنشاء محادثة تلقائية للمستخدم الجديد"""
     if created:
         try:
-            chat = Chat.objects.create(title=f"Chat for {instance.username}")
+            # ملاحظة: نموذج Chat لا يملك حقل "title" (كان يُمرَّر سابقاً ويُسبب
+            # TypeError عند إنشاء أي مستخدم جديد)، لذلك تمت إزالته هنا.
+            chat = Chat.objects.create()
             chat.participants.add(instance)
             logger.info(f"تم إنشاء محادثة جديدة للمستخدم {instance.username}")
         except Exception as e:

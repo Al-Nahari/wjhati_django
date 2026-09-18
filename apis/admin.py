@@ -1,29 +1,18 @@
 from django.contrib import admin
 from .models import (
-    Client, Wallet, Transaction, Vehicle, Driver, Trip, Booking, Rating,
-    Chat, Message, SupportTicket, FCMToken, Notification, Transfer,
+    Client, Vehicle, Driver, Trip, Booking, Rating,
+    Chat, Message, SupportTicket,
     SubscriptionPlan, Subscription, Bonus, TripStop, ItemDelivery,
     CasheBooking, CasheItemDelivery
 )
+# Wallet/Transaction/Transfer انتقلت إلى تطبيق Transaction، وNotification/FCMToken
+# إلى تطبيق Notification؛ سجلاتها الآن في admin.py الخاص بكل تطبيق.
 
 @admin.register(Client)
 class ClientAdmin(admin.ModelAdmin):
     list_display = ('user', 'city', 'status', 'status_del', 'device_id', 'created_at')
     search_fields = ('user__username', 'city', 'device_id')
     list_filter = ('status', 'city')
-
-@admin.register(Wallet)
-class WalletAdmin(admin.ModelAdmin):
-    list_display = ('user', 'balance', 'currency', 'is_locked', 'created_at')
-    search_fields = ('user__username',)
-    list_filter = ('currency', 'is_locked')
-
-@admin.register(Transaction)
-class TransactionAdmin(admin.ModelAdmin):
-    list_display = ('wallet', 'transaction_type', 'amount', 'status', 'reference_number', 'created_at')
-    search_fields = ('wallet__user__username', 'transaction_type')
-    list_filter = ('transaction_type', 'status')
-    readonly_fields = ('reference_number',)
 
 @admin.register(Vehicle)
 class VehicleAdmin(admin.ModelAdmin):
@@ -73,24 +62,6 @@ class SupportTicketAdmin(admin.ModelAdmin):
     list_display = ('user', 'subject', 'status', 'priority', 'created_at')
     search_fields = ('user__username', 'subject')
     list_filter = ('status', 'priority')
-
-@admin.register(FCMToken)
-class FCMTokenAdmin(admin.ModelAdmin):
-    list_display = ('user', 'token', 'created_at')
-    search_fields = ('user__username', 'token')
-    list_filter = ('created_at',)
-
-@admin.register(Notification)
-class NotificationAdmin(admin.ModelAdmin):
-    list_display = ('user', 'title', 'is_read', 'notification_type', 'created_at')
-    search_fields = ('user__username', 'title')
-    list_filter = ('notification_type', 'is_read')
-
-@admin.register(Transfer)
-class TransferAdmin(admin.ModelAdmin):
-    list_display = ('from_wallet', 'to_wallet', 'amount', 'status', 'transfer_code', 'created_at')
-    search_fields = ('from_wallet__user__username', 'to_wallet__user__username', 'transfer_code')
-    list_filter = ('status',)
 
 @admin.register(SubscriptionPlan)
 class SubscriptionPlanAdmin(admin.ModelAdmin):

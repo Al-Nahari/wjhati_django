@@ -1,13 +1,26 @@
+import os
+
 import requests
 
+# مهم جداً: كان مفتاح OneSignal REST API ومعرّف التطبيق مكتوبين مباشرة في الكود
+# وتم رفعهما إلى مستودع GitHub عام — هذا يعني أنهما مخترقان بالفعل ويجب إبطالهما
+# (regenerate) فوراً من لوحة تحكم OneSignal بغض النظر عن هذا التعديل، ثم وضع
+# القيم الجديدة فقط كمتغيرات بيئة (لا تُكتب في الكود ولا تُرفع إلى git).
+ONESIGNAL_APP_ID = os.environ.get("ONESIGNAL_APP_ID")
+ONESIGNAL_API_KEY = os.environ.get("ONESIGNAL_API_KEY")
+
+
 def send_notification(title, message, segments=["All"]):
+    if not ONESIGNAL_APP_ID or not ONESIGNAL_API_KEY:
+        return {"error": "ONESIGNAL_APP_ID / ONESIGNAL_API_KEY غير مضبوطتين في متغيرات البيئة."}
+
     headers = {
         "Content-Type": "application/json",
-        "Authorization": "Basic os_v2_org_nhceqyl6krd63e32jf4xpqggmicemnbcjshehsfubka73mn6w5ssxqpwxbdv7cnsw42vpddie7uf4egy3rj6bi63u4gyy2n4pbxstlq"
+        "Authorization": f"Basic {ONESIGNAL_API_KEY}",
     }
 
     payload = {
-        "app_id": "69c44861-7e54-47ed-937a-497977c0c662",
+        "app_id": ONESIGNAL_APP_ID,
         "included_segments": segments,  # يمكنك تخصيصها لاحقًا
         "headings": {
             "en": title,

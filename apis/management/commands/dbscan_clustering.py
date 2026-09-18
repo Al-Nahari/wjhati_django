@@ -47,11 +47,24 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('--min_cluster_size', type=int, default=3)
         parser.add_argument('--interval', type=int, default=20,
-                            help='زمن الانتظار بالثواني بين كل جولة جدولية')
+                            help='زمن الانتظار بالثواني بين كل جولة جدولية (يُستخدم فقط مع --loop)')
+        parser.add_argument('--loop', action='store_true',
+                            help='تشغيل حلقة دائمة يدوياً خارج Celery (لا تستخدمها إذا كانت المهمة'
+                                 ' مجدولة أصلاً عبر CELERY_BEAT_SCHEDULE، وإلا ستتراكم عمليات لا تنتهي'
+                                 ' وتُغرق عمّال Celery)')
 
     def handle(self, *args, **options):
+        # ملاحظة مهمة: هذه المهمة مجدولة بالفعل كل 20 ثانية عبر Celery Beat
+        # (CELERY_BEAT_SCHEDULE في settings.py). لذلك handle() تُنفَّذ جولة واحدة
+        # فقط بشكل افتراضي وتعود؛ التكرار الدوري تتولاه Celery Beat.
+        # كانت النسخة السابقة تحتوي على "while True" دائم هنا، مما يعني أن كل استدعاء
+        # عبر Celery كان يعلّق عامل Celery إلى الأبد ويتراكم مع كل جولة جديدة من Beat.
+        if not options['loop']:
+            self.run_scheduler(options)
+            return
+
         interval = options['interval']
-        self.stdout.write(self.style.NOTICE("🔄 بدء البث الدوري لجدولة الرحلات..."))
+        self.stdout.write(self.style.NOTICE("🔄 بدء البث الدوري لجدولة الرحلات (وضع --loop اليدوي)..."))
         while True:
             start_ts = now()
             self.stdout.write(self.style.NOTICE(f"🔁 بدء الجولة في {start_ts}"))

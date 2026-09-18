@@ -1,4 +1,5 @@
-from venv import logger
+import logging
+
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.db import transaction
@@ -6,6 +7,8 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from apis.models import Bonus
 from .models import Transaction, Transfer, Wallet
+
+logger = logging.getLogger(__name__)
 
 @receiver(post_save, sender=Bonus)
 def handle_bonus_creation(sender, instance, created, **kwargs):

@@ -7,7 +7,7 @@ services:
     ports:
       - "8000:8000"
     env_file:
-      - .env.example
+      - .env
     depends_on:
       - db
       - redis
@@ -19,7 +19,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
-      - .env.example
+      - .env
 
   # خدمة Redis
   redis:
@@ -34,7 +34,7 @@ services:
     volumes:
       - .:/app
     env_file:
-      - .env.example
+      - .env
     depends_on:
       - web
       - redis
@@ -46,7 +46,7 @@ services:
     volumes:
       - .:/app
     env_file:
-      - .env.example
+      - .env
     depends_on:
       - web
       - redis

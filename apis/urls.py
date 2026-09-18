@@ -26,6 +26,8 @@ router.register(r'cashe-item-deliveries', CasheItemDeliveryViewSet, basename='Ca
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('chats/', ChatListAPIView.as_view(), name='chat-list'),
-    path('messages/', MessageListAPIView.as_view(), name='message-list'),
 ]
+# ملاحظة: كانت هناك مسارات /chats/ و /messages/ هنا تتعارض مع نفس الأسماء في
+# backend/urls.py؛ الأخطر أن /messages/ هنا كانت بلا chat_id بينما
+# MessageListAPIView يتطلب self.kwargs['chat_id'] دائماً، فكانت أي زيارة لهذا
+# المسار تنتهي بخطأ KeyError. المسارات الصحيحة موجودة في backend/urls.py.

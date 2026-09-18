@@ -478,10 +478,6 @@ class Message(BaseModel):
     def __str__(self):
         return f"{self.sender.username}: {self.content[:30] if self.content else '📎 مرفق'}"
 
-
-    def __str__(self):
-        return f"{self.user.username} Profile"
-
 # ============================
 # نموذج تذاكر الدعم الفني
 # ============================

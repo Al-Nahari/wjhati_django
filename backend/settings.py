@@ -2,7 +2,6 @@ from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
 import os
-import dj_database_url
 
 load_dotenv()
 
@@ -23,6 +22,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'apis',
+    'Notification',
+    'Transaction',
     'rest_framework',
 ]
 
@@ -132,8 +133,17 @@ USE_TZ = True
 
 
 
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_CREDENTIALS = True
+# تنبيه أمني: لا تجمع بين السماح لكل النطاقات (*) والسماح بإرسال الكوكيز/بيانات
+# الاعتماد (credentials) معاً؛ هذا يسمح لأي موقع بقراءة استجابات مُوثّقة للمستخدم.
+# اضبط CORS_ALLOWED_ORIGINS في متغيرات البيئة بقائمة النطاقات الحقيقية (مفصولة بفواصل).
+_cors_origins = os.environ.get("CORS_ALLOWED_ORIGINS", "")
+if _cors_origins:
+    CORS_ALLOWED_ORIGINS = [o.strip() for o in _cors_origins.split(",") if o.strip()]
+    CORS_ALLOW_CREDENTIALS = True
+else:
+    # لا نطاقات محددة بعد: نسمح بالوصول العام لكن بدون كوكيز/اعتماد لتفادي الثغرة أعلاه.
+    CORS_ALLOW_ALL_ORIGINS = True
+    CORS_ALLOW_CREDENTIALS = False
 
 
 LOGGING = {
